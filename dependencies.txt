@@ -1,0 +1,21 @@
+>Create the environment for conda
+conda create --name norha python=3.7
+conda activate norha
+
+>Packages that you need to install for NORHA project with conda:
+conda install --name norha -y numpy matplotlib scipy pandas
+conda install --name norha -y --channel conda-forge nibabel nipype trimesh vtk
+conda install --name norha -y --channel anaconda tk
+
+>Packages to install using pip
+pip install pyradiomics
+
+>Packages required for Jupyter
+conda install --name norha -y ipykernel --update-deps --force-reinstall
+
+>Only if it is asked
+conda install --name norha -y --channel anaconda networkx
+
+
+>Commando for removing an environment
+conda remove --name <myenv> --all
