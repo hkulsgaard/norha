@@ -16,7 +16,7 @@ for file in $(ls *.nii*)
 	echo "	>$file"
 done
 echo
-read -p "[SELECT] D	o you want to continue? [y/n] -> " -r
+read -p "[SELECT] Do you want to continue? [y/n] -> " -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then

@@ -24,7 +24,7 @@ def check_mesh_old(path):
 	mesh = trimesh.load(path)
 	if (not mesh.is_volume):
 		print('[INFO] Problem with volume, trying with VTK')
-		nii2mesh_VTK(path)
+		nii2mesh(path)
 		# we created a new STl and once more time read again  
 		mesh = trimesh.load(utils.addSufix(path,"_fixed"))
 		if (not mesh.is_volume):
@@ -35,7 +35,7 @@ def check_mesh_old(path):
 
 
 
-def nii2mesh_VTK(path,its=30):
+def nii2mesh(path,its=30):
 # This functions generates a mesh using VTK library from input nifti
 # The paratemers for the mesh generation are fixed (future work)
 
@@ -79,16 +79,16 @@ def nii2mesh_VTK(path,its=30):
 	smoother.GenerateErrorScalarsOn()
 	smoother.Update()
 
-	# save the output mesh
-	writer = vtk.vtkSTLWriter()
-	writer.SetInputConnection(smoother.GetOutputPort())
-	writer.SetFileTypeToASCII()
-	writer.SetFileName(utils.changeExt(utils.addSufix(path,"_vtk"),"stl"))
-	writer.Write()
+	save_mesh(smoother.GetOutput(), utils.changeExt(utils.addSufix(path,"_vtk0"),"stl"))
 
-def cami_binaryToMesh(inputImage, kernel_factor = 1.7):
+def cami_nii2mesh(path, factor = 1.7):
 # Create a mesh from binary image
-# inputImage: vtkImage binary
+# path for input image vtkImage binary
+
+	reader = vtk.vtkNIFTIImageReader()
+	reader.SetFileName(path)
+	reader.Update()
+	inputImage = reader.GetOutput()
 
 	# Pre-smoothing phase
 	spacing = np.array(inputImage.GetSpacing())
@@ -96,11 +96,12 @@ def cami_binaryToMesh(inputImage, kernel_factor = 1.7):
 	imagefilter.SetInputData(inputImage)
     #imagefilter.Method = "gauss"
 	imagefilter.SetRadiusFactors(1,1,1)
-	imagefilter.SetStandardDeviations(spacing * kernel_factor)
+	imagefilter.SetStandardDeviations(spacing * factor)
 
 	# Marching cubes for mesh generation
 	mcubes = vtk.vtkMarchingCubes()
 	mcubes.SetInputConnection(imagefilter.GetOutputPort())
+	#mcubes.SetInputConnection(reader.GetOutputPort())
 	mcubes.ComputeScalarsOff()
 	mcubes.ComputeGradientsOff()
 	mcubes.ComputeNormalsOff()
@@ -116,15 +117,22 @@ def cami_binaryToMesh(inputImage, kernel_factor = 1.7):
 	smoothMesh.SetRelaxationFactor(0.5)
 
 	# Improving the mesh quality
-	remesh = vtk.vtkLinearSubdivisionFilter()
-	remesh.SetInputConnection(smoothMesh.GetOutputPort())
-	remesh.SetNumberOfSubdivisions(2)
-
-    #smoothMesh = vtk.vtkSmoothPolyDataFilter()
-    #smoothMesh.SetInputConnection(remesh.GetOutputPort())
-    #smoothMesh.SetNumberOfIterations(10)
-    #smoothMesh.SetRelaxationFactor(0.5)
+	#remesh = vtk.vtkLinearSubdivisionFilter()
+	#remesh.SetInputConnection(smoothMesh.GetOutputPort())
+	#remesh.SetNumberOfSubdivisions(2)
 
 	# Run the VTK pipeline
-	remesh.Update()
-	return remesh.GetOutput()
+	#remesh.Update()
+	smoothMesh.Update()
+	#mesh = remesh.GetOutput()
+	mesh = smoothMesh.GetOutput()
+	
+	save_mesh(mesh, utils.changeExt(utils.addSufix(path,"_vtk1"),"stl"))
+
+def save_mesh(mesh, path):
+# save the input mesh
+	writer = vtk.vtkSTLWriter()
+	writer.SetInputData(mesh)
+	writer.SetFileTypeToASCII()
+	writer.SetFileName(path)
+	writer.Write()

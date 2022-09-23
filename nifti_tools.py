@@ -28,7 +28,7 @@ def split_clusters(path, c_dict = {1:'right', 2:'left'}, verbose=False):
 			#print('[INFO] Volume of cluster ' + v + '(' + k + '): ' + volume +' mm^3')
 			print('[INFO] Volume of cluster {} ({}): {} mm^3'.format(v, k, volume))
 
-		#nib.save(hp_nii, misc.addSufix(path, ('_'+v)))
+		nib.save(hp_nii, utils.addSufix(path, ('_'+v)))
 
 def load_nifti(path):
 	nii = nib.load(path)

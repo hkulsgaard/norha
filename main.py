@@ -5,7 +5,7 @@ import dialog
 def main():
 	
 	# initial directory
-	inic_dir = 'F:/Software/VMachines/Shared/meshes/hippos/'
+	inic_dir = 'F:/Software/VMachines/Shared/hippos/hipp/split_hps'
 
 	# select the images to process
 	fnames = dialog.select_files(inic_dir,"nii")
@@ -14,7 +14,8 @@ def main():
 	for f in fnames:
 		nit.split_clusters(f,verbose=True)
 		#met.check_mesh(f)
-		#met.nii2mesh_VTK(f,10)
+		#met.nii2mesh(f,30)
+		#met.cami_nii2mesh(f,1)
 
 		#print(f)
 
