@@ -18,8 +18,6 @@ def check_mesh(path):
 		print('[INFO] There was a problem in the mesh, try creating the mesh with VTK')
 
 def check_mesh_old(path):
-	# crear las carpetas necesarias
-	#makedirs(datasets_folder_left, exist_ok=True)
 
 	mesh = trimesh.load(path)
 	if (not mesh.is_volume):

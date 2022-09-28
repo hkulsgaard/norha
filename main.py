@@ -1,6 +1,7 @@
 import nifti_tools as nit
 import mesh_tools as met
 import dialog
+from norhaMesh import norhaMesh
 
 def main():
 	
@@ -12,12 +13,19 @@ def main():
 
 	print("\n")
 	for f in fnames:
-		nit.split_clusters(f,verbose=True)
+		#nii = nit.load_nifti(f)
+		
+		#nit.split_clusters(f,verbose=True)
+		#nit.calc_vol(f)
+		
 		#met.check_mesh(f)
 		#met.nii2mesh(f,30)
 		#met.cami_nii2mesh(f,1)
 
-		#print(f)
+		mesh = norhaMesh()
+		mesh.build_from_nifti(f)
+		mesh.check_integrity(True)
+
 
 	print_end()
 
