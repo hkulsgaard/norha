@@ -8,7 +8,7 @@ conda install --name norha -y --channel conda-forge nibabel nipype trimesh vtk
 conda install --name norha -y --channel anaconda tk
 
 >Packages to install using pip
-pip install pyradiomics
+pip install pyradiomics meshparty
 
 >Packages required for Jupyter
 conda install --name norha -y ipykernel --update-deps --force-reinstall

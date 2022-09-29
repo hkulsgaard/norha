@@ -1,21 +1,35 @@
 import utils
 import vtk
 import trimesh
+from meshparty import trimesh_vtk
 import 	numpy as np
 
 class norhaMesh:
-# This class contains a mesh object that can built using VTK libraries (VTKmesh) or Trimesh (TRImesh).
-# path: refers to the absolute path from the mesh or the origin nifti was located
-# VTKmesh: this type of mesh is used in the transformation from nifti to mesh and for exporting
-# TRImesh: this one is used for checking integrity and display the mesh and can be loaded directly
 
-	def __init__(self, path=""):
-		self.path = path
+	""" This class contains a mesh object that can built using VTK libraries and converted to Trimesh.
 
-	def load_mesh(self, path):
+	Variables
+	---------
+	path: 
+		Absolute path of the nifti used for the mesh creation
+	VTKmesh: 
+		This mesh format is used in the transformation from nifti to mesh and for exporting
+	TRImesh: 
+		Created based on VTKmesh .Is used to check integrity and display the mesh
+	points:
+		Set of points obtained from the VTKmesh
+	tris:
+		Set of triangles obtained from the VTKmesh
+	edges:
+		Set of edges obtained from the VTKmesh
+	
+	""" 
 
-		utils.print_info(path,"Loading trimesh mesh")
-		self.TRImesh = trimesh.load(path)
+	def __init__(self, path="", export=True):
+		if path != "":
+			self.path = path
+			self.build_from_nifti(self.path, export)
+			
 
 	def build_from_nifti(self, path, export=True, factor=1):
 		
@@ -60,8 +74,11 @@ class norhaMesh:
 		#mesh = remesh.GetOutput()
 		self.VTKmesh = smoothMesh.GetOutput()
 		
+		self.points, self.tris, self.edges = trimesh_vtk.poly_to_mesh_components(self.VTKmesh)
+		self.TRImesh = trimesh.Trimesh(vertices=self.points, faces=self.tris)
+		
 		if export:
-			self.export_mesh(self.VTKmesh, utils.changeExt(utils.addSufix(self.path,"_vtk1"),"stl"))
+			self.export_mesh(self.VTKmesh, utils.changeExt(utils.addSufix(self.path,"_vtk2")))
 
 	def load_nifti(self, path):
 		utils.print_info(path,"Loading nifti")
@@ -78,10 +95,20 @@ class norhaMesh:
 		writer.SetFileTypeToASCII()
 		writer.SetFileName(new_path)
 		writer.Write()
+		
+		print('[INFO] Exported to: {}'.format(new_path))
+
 	
-	def check_integrity(self, verbose=False):
+	def check_integrity(self, verbose=True):
+		#TRImesh = trimesh.exchange.misc.load_meshio(self.VTKmesh,'vtk')
+
 		integrity = [self.TRImesh.is_winding_consistent, self.TRImesh.is_volume, self.TRImesh.is_watertight, self.TRImesh.volume]
+		
 		if verbose:
-			print('[INFO] Mesh integrity: ' + str(integrity))
+			print('[INFO] Mesh integrity:')
+			print('	>Winding consistent: {}'.format(integrity[0]))
+			print('	>Is volume: {}'.format(integrity[1]))
+			print('	>Is watertight: {}'.format(integrity[2]))
+			print('	>Volume: {:.2f} mm3'.format(integrity[3]))
 		else:
 			return integrity

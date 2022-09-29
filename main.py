@@ -22,9 +22,8 @@ def main():
 		#met.nii2mesh(f,30)
 		#met.cami_nii2mesh(f,1)
 
-		mesh = norhaMesh()
-		mesh.build_from_nifti(f)
-		mesh.check_integrity(True)
+		mesh = norhaMesh(f,False)
+		mesh.check_integrity()
 
 
 	print_end()
