@@ -87,6 +87,8 @@ def cami_nii2mesh(path, factor = 1.7):
 	reader.SetFileName(path)
 	reader.Update()
 	inputImage = reader.GetOutput()
+	#<<<<<<< imprimir
+
 
 	# Pre-smoothing phase
 	spacing = np.array(inputImage.GetSpacing())
@@ -94,7 +96,8 @@ def cami_nii2mesh(path, factor = 1.7):
 	imagefilter.SetInputData(inputImage)
     #imagefilter.Method = "gauss"
 	imagefilter.SetRadiusFactors(1,1,1)
-	imagefilter.SetStandardDeviations(spacing * factor)
+	imagefilter.SetStandardDeviations(spacing * factor)#<<<<<<<
+	#<<<<<<< imprimir
 
 	# Marching cubes for mesh generation
 	mcubes = vtk.vtkMarchingCubes()
@@ -103,7 +106,7 @@ def cami_nii2mesh(path, factor = 1.7):
 	mcubes.ComputeScalarsOff()
 	mcubes.ComputeGradientsOff()
 	mcubes.ComputeNormalsOff()
-	mcubes.SetValue(0, 0.25)
+	mcubes.SetValue(0, 0.25)#<<<<<<<
 
     #triangles = vtk.vtkTriangleFilter()
     #triangles.SetInputConnection(mcubes.GetOutputPort())
