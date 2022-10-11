@@ -21,3 +21,11 @@ def changeExt(path, ext):
 
 def print_info(path, process_type = "Processing"):
 	print("[INFO] " + process_type + ": " + path)
+
+def clean_path(string):
+    # clean and standardize text descriptions, which makes searching files easier
+	# forbidden_symbols = ["*", ".", ",", "\"", "\\", "/", "|", "[", "]", ":", ";", " "]
+	forbidden_symbols = ["\"", "\\"]
+	for symbol in forbidden_symbols:
+		string = string.replace(symbol, "/") # replace everything with an underscore
+	return string.lower()

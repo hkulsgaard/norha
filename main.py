@@ -1,5 +1,6 @@
 import nifti_tools as nit
 import mesh_tools as met
+import utils
 import dialog
 from norhaMesh import norhaMesh
 
@@ -9,7 +10,7 @@ def main():
 	inic_dir = 'F:/Software/VMachines/Shared/hippos/hipp/split_hps'
 
 	# select the images to process
-	fnames = dialog.select_files(inic_dir,"nii")
+	fnames = dialog.select_files(utils.clean_path(inic_dir),"nii")
 
 	print("\n")
 	for f in fnames:
